@@ -16,7 +16,7 @@ import java.util.Map;
 
 @RestController
 public class filmController {
-    private static final LocalDate VALID_DATA = LocalDate.of(1895, 11, 28);
+    private static final LocalDate FIRST_FILM_RELEASE = LocalDate.of(1895, 11, 28);
     Map<Integer, Film> data = new HashMap<>();
     private static int currentId = 0;
 
@@ -27,11 +27,8 @@ public class filmController {
 
     @PostMapping("/films")
     public Film create(@Valid @RequestBody Film film) throws ValidationException {
-        if (film.getName() == null || film.getDescription() == null ||film.getName().isBlank() || film.getDuration() < 1) {
-            throw new ValidationException("Ошибка ввода.");
-        }
-        if (film.getReleaseDate().isBefore(VALID_DATA)) {
-            throw new ValidationException("Релиз фильма не может быть раньше 11 декабря 1895 года.");
+        if (film.getReleaseDate().isBefore(FIRST_FILM_RELEASE)) {
+            throw new ValidationException("The release of the film cannot be earlier than December 11, 1895.");
         }
         film.setId(++currentId);
         data.put(film.getId(), film);
@@ -40,11 +37,10 @@ public class filmController {
 
     @PutMapping("/films")
     public Film filmUpdate(@Valid @RequestBody Film film) throws ValidationException {
-        if(data.containsKey(film.getId())) {
-            data.put(film.getId(), film);
-            return data.get(film.getId());
-        } else {
-            throw new ValidationException("Данного фильма не существует.");
+        if(!data.containsKey(film.getId())) {
+            throw new ValidationException("This movie does not exist.");
         }
+        data.put(film.getId(), film);
+        return data.get(film.getId());
     }
 }

@@ -31,9 +31,6 @@ public class userController {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-            throw new ValidationException("День рождения не может быть в будущем времени.");
-        }
         user.setId(++currentId);
         data.put(user.getId(), user);
         return user;
@@ -41,11 +38,10 @@ public class userController {
 
     @PutMapping("/users")
     public User userUpdate(@Valid @RequestBody User user) throws ValidationException {
-        if(data.containsKey(user.getId())) {
-            data.put(user.getId(), user);
-            return data.get(user.getId());
-        } else {
-            throw new ValidationException("Данного юсера не существует.");
+        if(!data.containsKey(user.getId())) {
+            throw new ValidationException("This user does not exist.");
         }
+        data.put(user.getId(), user);
+        return data.get(user.getId());
     }
 }

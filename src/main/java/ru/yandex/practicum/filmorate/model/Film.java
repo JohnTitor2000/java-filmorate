@@ -15,5 +15,6 @@ public class Film {
     String description;
     @NotNull
     LocalDate releaseDate;
+    @Positive
     Integer duration;
 }

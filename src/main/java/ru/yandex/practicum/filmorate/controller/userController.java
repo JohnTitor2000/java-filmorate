@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.ValidationException;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +17,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 public class userController {
-    Map<Integer, User> data = new HashMap<>();
+    private Map<Integer, User> data = new HashMap<>();
     private static int currentId = 0;
 
     @GetMapping("/users")
@@ -27,7 +26,7 @@ public class userController {
     }
 
     @PostMapping("/users")
-    public User create(@Valid  @RequestBody User user) throws ValidationException {
+    public User create(@Valid @RequestBody User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
@@ -37,9 +36,12 @@ public class userController {
     }
 
     @PutMapping("/users")
-    public User userUpdate(@Valid @RequestBody User user) throws ValidationException {
+    public User userUpdate(@Valid @RequestBody User user) {
         if(!data.containsKey(user.getId())) {
             throw new ValidationException("This user does not exist.");
+        }
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
         }
         data.put(user.getId(), user);
         return data.get(user.getId());

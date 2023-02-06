@@ -17,7 +17,7 @@ import java.util.Map;
 @RestController
 public class filmController {
     private static final LocalDate FIRST_FILM_RELEASE = LocalDate.of(1895, 11, 28);
-    Map<Integer, Film> data = new HashMap<>();
+    private Map<Integer, Film> data = new HashMap<>();
     private static int currentId = 0;
 
     @GetMapping("/films")
@@ -26,7 +26,7 @@ public class filmController {
     }
 
     @PostMapping("/films")
-    public Film create(@Valid @RequestBody Film film) throws ValidationException {
+    public Film create(@Valid @RequestBody Film film) {
         if (film.getReleaseDate().isBefore(FIRST_FILM_RELEASE)) {
             throw new ValidationException("The release of the film cannot be earlier than December 11, 1895.");
         }
@@ -36,9 +36,12 @@ public class filmController {
     }
 
     @PutMapping("/films")
-    public Film filmUpdate(@Valid @RequestBody Film film) throws ValidationException {
+    public Film filmUpdate(@Valid @RequestBody Film film) {
         if(!data.containsKey(film.getId())) {
             throw new ValidationException("This movie does not exist.");
+        }
+        if (film.getReleaseDate().isBefore(FIRST_FILM_RELEASE)) {
+            throw new ValidationException("The release of the film cannot be earlier than December 11, 1895.");
         }
         data.put(film.getId(), film);
         return data.get(film.getId());

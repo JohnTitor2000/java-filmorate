@@ -38,16 +38,16 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<Map<String, String>> handleValidationExceprion(final ValidationException e) {
+    public ResponseEntity<Map<String, String>> handleValidationException(final ValidationException e) {
         log.error("Validation error.", e);
         return new ResponseEntity<>(Map.of("message", e.getMessage()),
                 HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
-    public ResponseEntity<Map<String, String>> handleValidationExceprion(final Error e) {
+    public ResponseEntity<Map<String, String>> handleValidationException(final Error e) {
         log.error("Validation error.", e);
         return new ResponseEntity<>(Map.of("message", e.getMessage()),
-                HttpStatus.INTERNAL_SERVER_ERROR);
+                HttpStatus.BAD_REQUEST);
     }
 }

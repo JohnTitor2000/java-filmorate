@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import javax.validation.Valid;
@@ -10,6 +11,7 @@ import javax.validation.constraints.Positive;
 import java.util.Collection;
 import java.util.List;
 
+@Validated
 @Slf4j
 @Service
 public class UserService {
@@ -54,7 +56,7 @@ public class UserService {
         return userStorage.getUserById(id);
     }
 
-    public void addFriend(@Positive int id, @Positive int friendId) {
+    public void addFriend(int id, int friendId) {
         log.debug("Received a request to add friends with IDs: " + id + ", " + friendId);
         userStorage.addFriend(id, friendId);
     }

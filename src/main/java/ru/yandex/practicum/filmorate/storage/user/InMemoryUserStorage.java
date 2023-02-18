@@ -5,7 +5,6 @@ import ru.yandex.practicum.filmorate.exceptions.GetNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.UpdateNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

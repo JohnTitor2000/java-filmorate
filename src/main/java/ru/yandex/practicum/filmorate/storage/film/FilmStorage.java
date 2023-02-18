@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 public interface FilmStorage {
-    Map<Integer, Film> films = new HashMap<>();
 
     public Film getFilmById(int id);
 
@@ -20,7 +19,7 @@ public interface FilmStorage {
 
     public void deleteAllFilms();
 
-    public List<Film> getMOstPopularFilms(int count);
+    public List<Film> getMostPopularFilms(int count);
 
     public Collection<Film> getAllFilms();
 

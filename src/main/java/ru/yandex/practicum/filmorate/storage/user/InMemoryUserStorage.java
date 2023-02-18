@@ -16,6 +16,7 @@ public class InMemoryUserStorage implements UserStorage{
     private final static int DEFAULT_MATRIX_SIZE = 10;
     private final static int FRIENDSHIP = 1;
     private final static int NO_FRIENDSHIP = 0;
+
     private int[][] friends = new int[DEFAULT_MATRIX_SIZE][DEFAULT_MATRIX_SIZE];
 
     public void addFriend(int id, int friendId) {
@@ -107,7 +108,7 @@ public class InMemoryUserStorage implements UserStorage{
     }
 
     private void expandAdjacencyMatrix() {
-        if (users.size() / friends.length < 0.7) {
+        if (users.size() / (double) friends.length < 0.7) {
             return;
         }
         int[][] newMatrix = new int[friends.length * 2][friends[0].length * 2];

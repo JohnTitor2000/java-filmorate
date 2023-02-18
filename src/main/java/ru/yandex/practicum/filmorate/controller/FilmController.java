@@ -17,7 +17,6 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
@@ -26,13 +25,13 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequestMapping("/films")
-public class filmController {
+public class FilmController {
     private static final LocalDate FIRST_FILM_RELEASE = LocalDate.of(1895, 11, 28);
     private final FilmService filmService;
     private static int currentId = 1;
 
     @Autowired
-    public filmController(FilmService filmService) {
+    public FilmController(FilmService filmService) {
         this.filmService = filmService;
     }
 
@@ -60,13 +59,13 @@ public class filmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public void addLike(@PathVariable @PositiveOrZero int id, @PathVariable @PositiveOrZero int userId) {
+    public void addLike(@PathVariable @Positive int id, @PathVariable @Positive int userId) {
         log.debug("Received a request to add a like to the movie " + id + " from a user with an ID: " + userId);
         filmService.addLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public void deleteLike(@PathVariable @PositiveOrZero int id, @PathVariable @PositiveOrZero int userId) {
+    public void deleteLike(@PathVariable @Positive int id, @PathVariable @Positive int userId) {
         log.debug("Received a request to delete a like to the movie " + id + " from a user with an ID: " + userId);
         filmService.deleteLike(id, userId);
     }
@@ -74,7 +73,7 @@ public class filmController {
     @GetMapping("/popular")
     public List<Film> getPopularFilms(@RequestParam Optional<Integer> count) {
         log.debug("Received a request for the most popular movies");
-        return filmService.getMostPopularFilms(count.orElseGet(() -> 10));
+        return filmService.getMostPopularFilms(count.orElse(10));
     }
 
     @GetMapping("/{id}")

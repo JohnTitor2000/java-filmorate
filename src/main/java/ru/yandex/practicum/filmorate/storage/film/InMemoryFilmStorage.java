@@ -6,23 +6,26 @@ import ru.yandex.practicum.filmorate.exceptions.GetNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
-    @Autowired
-    UserStorage userStorage;
-    TreeSet<Film> mostPopularFilms = new TreeSet<>(Comparator.comparingInt(Film::getcountLikes).thenComparing(Film::getId).reversed());
 
-    public void deleteLike(Film film, User user) {
-        film.getLikes().remove(user);
+    private final UserStorage userStorage;
+    TreeSet<Film> mostPopularFilms = new TreeSet<>(Comparator.comparingInt(Film::getcountLikes).thenComparing(Film::getId).reversed());
+    Map<Integer, Film> films = new HashMap<>();
+
+    @Autowired
+    public InMemoryFilmStorage(UserStorage userStorage) {
+        this.userStorage = userStorage;
     }
 
     @Override
@@ -42,7 +45,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public void deleteFilmById(int id) {
         if (!films.containsKey(id)) {
-            return;
+            throw  new NotFoundException("There is no such film.");
         }
         films.remove(id);
         mostPopularFilms.remove(films.get(id));
@@ -65,7 +68,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getMOstPopularFilms(int count) {
+    public List<Film> getMostPopularFilms(int count) {
         if (count < 0) {
             throw new ValidationException("You can only output a positive number of popular movies.");
         }

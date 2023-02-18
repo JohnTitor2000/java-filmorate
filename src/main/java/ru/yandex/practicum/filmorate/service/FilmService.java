@@ -21,7 +21,7 @@ public class FilmService {
     }
 
     public List<Film> getMostPopularFilms(int count) {
-        return filmStorage.getMOstPopularFilms(count);
+        return filmStorage.getMostPopularFilms(count);
     }
 
     public Film getFilmById(int id) {

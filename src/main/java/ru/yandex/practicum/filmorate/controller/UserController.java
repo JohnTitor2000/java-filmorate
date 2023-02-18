@@ -15,21 +15,20 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
-import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Positive;
 import java.util.Collection;
 import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/users")
-@RequiredArgsConstructor
-public class userController {
+public class UserController {
 
-    UserService userService;
+    private final UserService userService;
     private static int currentId = 1;
 
     @Autowired
-    public userController(UserService userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
@@ -40,7 +39,7 @@ public class userController {
     }
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable @PositiveOrZero int id) {
+    public User getUserById(@PathVariable @Positive int id) {
         log.debug("Received a request to get a user by ID " + id);
         return userService.getUserById(id);
     }
@@ -63,32 +62,32 @@ public class userController {
     }
 
     @DeleteMapping("/{id}")
-    public void userRemove(@PathVariable @PositiveOrZero int id) {
+    public void userRemove(@PathVariable @Positive int id) {
         log.debug("Received a request to delete the user by ID: " + id);
         userService.deleteUser(userService.getUserById(id));
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public void addFriend(@PathVariable @PositiveOrZero int id, @PathVariable @PositiveOrZero int friendId) {
+    public void addFriend(@PathVariable @Positive int id, @PathVariable @Positive int friendId) {
         log.debug("Received a request to add friends with IDs: " + id + ", " + friendId);
         userService.addFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public void deleteFriend(@PathVariable @PositiveOrZero int id, @PathVariable @PositiveOrZero int friendId) {
+    public void deleteFriend(@PathVariable @Positive int id, @PathVariable @Positive int friendId) {
         log.debug("Received a request to delete  friends with IDs: " + id + ", " + friendId);
         userService.deleteFriend(id, friendId);
     }
 
     @GetMapping("/{id}/friends")
-    public List<User> getAllFriends(@PathVariable @PositiveOrZero int id) {
+    public List<User> getAllFriends(@PathVariable @Positive int id) {
         log.debug("A request was received to get all the user's friends with an ID: " + id);
         return userService.getFriends(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public List<User> getCommonFriends(@PositiveOrZero @PathVariable int id,
-                                       @PositiveOrZero @PathVariable int otherId) {
+    public List<User> getCommonFriends(@Positive @PathVariable int id,
+                                       @Positive @PathVariable int otherId) {
         log.debug("A request was received to get mutual friends of users with an IDs: " + id + ", " + otherId);
         return  userService.getCommonFriends(id, otherId);
     }

@@ -7,16 +7,24 @@ import ru.yandex.practicum.filmorate.exceptions.UpdateNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class InMemoryUserStorage implements UserStorage{
+
+    private final Map<Integer, User> users = new HashMap<>();
 
     private final static int DEFAULT_MATRIX_SIZE = 10;
     private final static int FRIENDSHIP = 1;
     private final static int NO_FRIENDSHIP = 0;
 
     private int[][] friends = new int[DEFAULT_MATRIX_SIZE][DEFAULT_MATRIX_SIZE];
+
+    public Map<Integer, User> getUsers() {
+        return users;
+    }
 
     public void addFriend(int id, int friendId) {
         if (!users.containsKey(id) || !users.containsKey(friendId)) {

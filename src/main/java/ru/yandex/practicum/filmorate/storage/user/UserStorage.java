@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 public interface UserStorage {
-    Map<Integer, User> users = new HashMap<>();
 
     public User getUserById(int id);
 
@@ -29,4 +28,6 @@ public interface UserStorage {
     public List<User> getFriends(int id);
 
     public List<User> getCommonFriends(int id, int otherId);
+
+    public Map<Integer, User> getUsers();
 }

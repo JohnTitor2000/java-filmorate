@@ -87,7 +87,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     public void deleteLike(int id, int userId) {
-        if (!films.containsKey(id)) {
+        if (!films.containsKey(id) || !userStorage.getUsers().containsKey(userId)) {
             throw new GetNotFoundException("There is no such film.");
         }
         userStorage.getUserById(userId);

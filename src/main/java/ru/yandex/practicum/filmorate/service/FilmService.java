@@ -66,7 +66,7 @@ public class FilmService {
         filmStorage.addLike(id, userId);
     }
 
-    public void deleteLike(@Positive int id, @Positive int userId) {
+    public void deleteLike(int id, int userId) {
         log.debug("Received a request to delete a like to the movie " + id + " from a user with an ID: " + userId);
         filmStorage.deleteLike(id, userId);
     }

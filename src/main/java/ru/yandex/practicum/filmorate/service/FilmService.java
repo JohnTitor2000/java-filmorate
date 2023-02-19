@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.time.LocalDate;
@@ -17,12 +17,11 @@ import java.util.List;
 @Validated
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class FilmService {
 
     private static int currentId = 1;
     private static final LocalDate FIRST_FILM_RELEASE = LocalDate.of(1895, 11, 28);
-    FilmStorage filmStorage;
+    private final FilmStorage filmStorage;
 
     @Autowired
     public FilmService(FilmStorage filmStorage) {

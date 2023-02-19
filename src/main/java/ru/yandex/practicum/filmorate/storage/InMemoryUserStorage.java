@@ -1,10 +1,11 @@
-package ru.yandex.practicum.filmorate.storage.user;
+package ru.yandex.practicum.filmorate.storage;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.GetNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.UpdateNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class InMemoryUserStorage implements UserStorage{
+public class InMemoryUserStorage implements UserStorage {
 
     private final Map<Integer, User> users = new HashMap<>();
 
@@ -58,9 +59,6 @@ public class InMemoryUserStorage implements UserStorage{
 
     @Override
     public List<User> getCommonFriends(int id, int otherId) {
-        /** Как написать тоже самое через стримы? Уверен что можно,
-         * но не понимаю, как, преобразовав массив в стрим,
-         * работать с индексами **/
         if(!users.containsKey(id) || !users.containsKey(otherId)) {
             throw new NotFoundException("There is no such user");
         }

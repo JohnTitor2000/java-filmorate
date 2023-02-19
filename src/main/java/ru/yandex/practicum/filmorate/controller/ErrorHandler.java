@@ -16,25 +16,11 @@ import java.util.Map;
 @ControllerAdvice
 public class ErrorHandler {
 
-    @ExceptionHandler
-    public ResponseEntity<Map<String, String>> handleUpdateNotFoundException(final UpdateNotFoundException e) {
-        log.error("ID not found when trying to update.", e);
-        return new ResponseEntity<>(Map.of("message", e.getMessage()),
-                                    HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<Map<String, String>> handleGetNotFoundException(final GetNotFoundException e) {
-        log.error("ID not found when trying to retrieve.", e);
-        return new ResponseEntity<>(Map.of("message", e.getMessage()),
-                HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<Map<String, String>> handleNotFoundException(final NotFoundException e) {
+    @ExceptionHandler({NotFoundException.class, GetNotFoundException.class, UpdateNotFoundException.class})
+    public ResponseEntity<Map<String, String>> handleNotFoundException(final Exception e) {
         log.error("ID not found.", e);
         return new ResponseEntity<>(Map.of("message", e.getMessage()),
-                HttpStatus.NOT_FOUND);
+                                    HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler

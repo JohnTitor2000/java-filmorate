@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
@@ -12,7 +13,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.List;
 
 @Validated
 @Slf4j
@@ -28,7 +28,7 @@ public class FilmService {
         this.filmStorage = filmStorage;
     }
 
-    public List<Film> getMostPopularFilms(int count) {
+    public Collection<Film> getMostPopularFilms(int count) {
         log.debug("Received a request for the most popular movies");
         return filmStorage.getMostPopularFilms(count);
     }
@@ -51,6 +51,9 @@ public class FilmService {
 
     public void updateFilm(@Valid Film film) {
         filmDataValidate(film);
+        if (film.getId() <= 0) {
+            throw new NotFoundException("The movie with this id was not found.");
+        }
         log.debug("Received a request to update the movie with ID: " + film.getId());
         filmStorage.updateFilmById(film.getId(), film);
     }
@@ -66,6 +69,12 @@ public class FilmService {
     }
 
     public void deleteLike(int id, int userId) {
+        if (id <= 0) {
+            throw new NotFoundException("No movie with this id was found");
+        }
+        if (userId <= 0) {
+            throw new NotFoundException("No user with this id was found");
+        }
         log.debug("Received a request to delete a like to the movie " + id + " from a user with an ID: " + userId);
         filmStorage.deleteLike(id, userId);
     }

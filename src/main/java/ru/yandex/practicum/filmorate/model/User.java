@@ -10,15 +10,15 @@ import java.time.LocalDate;
 @Data
 public class User {
 
-    int id;
+    private int id;
     @NotNull
     @Email
-    String email;
+    private String email;
     @NotNull
     @NotBlank
-    String login;
-    String name;
+    private String login;
+    private String name;
     @NotNull
     @PastOrPresent(message = "The birthday cannot be in the future tense.")
-    LocalDate birthday;
+    private LocalDate birthday;
 }

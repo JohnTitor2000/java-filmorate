@@ -10,7 +10,9 @@ public class Director {
     @NotBlank
     private String name;
 
-    public Director(){}
+    public Director() {
+    }
+
     public Director(int id, String name) {
         this.id = id;
         this.name = name;

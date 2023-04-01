@@ -6,6 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.exceptions.GetNotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.ReviewStorage;
+import ru.yandex.practicum.filmorate.util.ReviewUtil;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -17,18 +18,22 @@ import java.util.*;
 @Service
 public class ReviewService {
     private final ReviewStorage reviewStorage;
+    private final ReviewUtil reviewUtil;
 
-    public ReviewService(ReviewStorage reviewStorage) {
+    public ReviewService(ReviewStorage reviewStorage, ReviewUtil reviewUtil) {
         this.reviewStorage = reviewStorage;
+        this.reviewUtil = reviewUtil;
     }
 
     public Review addReview(@Valid Review review) {
+        reviewUtil.checkPositive(review);
         log.info("User with Id=" + review.getUserId() + " add review to film with Id=" + review.getFilmId() + ".");
         reviewStorage.addReview(review);;
         return review;
     }
 
     public Review updateReview(@Valid Review review) {
+        reviewUtil.checkPositive(review);
         log.info("User with Id=" + review.getUserId() + " update review to film with Id=" + review.getFilmId() + ".");
         reviewStorage.updateReview(review);
         return review;

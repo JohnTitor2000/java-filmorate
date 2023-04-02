@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.aop.Feed;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.service.ReviewService;
 
@@ -18,18 +19,21 @@ public class ReviewsController {
     }
 
     @PostMapping
+    @Feed
     public Review addReview(@RequestBody Review review) {
         reviewService.addReview(review);
         return review;
     }
 
     @PutMapping
+    @Feed
     public Review updateReview(@RequestBody Review review) {
         reviewService.updateReview(review);
         return review;
     }
 
     @DeleteMapping("/{id}")
+    @Feed
     public void deleteReview(@PathVariable("id") Integer id) {
         reviewService.deleteReview(id);
     }

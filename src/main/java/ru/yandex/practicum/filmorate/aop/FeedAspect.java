@@ -13,8 +13,6 @@ import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.service.ReviewService;
-
-import java.sql.Timestamp;
 import java.time.Instant;
 
 @Component
@@ -35,7 +33,9 @@ public class FeedAspect {
 
 
     @Pointcut("@annotation(Feed)")
-    public void feedPointcut() {}
+    public void feedPointcut() {
+
+    }
 
 
     @Around("feedPointcut()")
@@ -50,7 +50,7 @@ public class FeedAspect {
         } else if (name.contains(LIKE) && !name.contains(REVIEW)) {
             event.setEventType(LIKE);
             setIdsLikeEvent(event, joinPoint);
-        } else if (name.contains(REVIEW) && !name.contains(LIKE) ) {
+        } else if (name.contains(REVIEW) && !name.contains(LIKE)) {
             event.setEventType(REVIEW);
             setIdsReviewEvent(event, joinPoint);
         } else {

@@ -27,4 +27,5 @@ public class Film {
     private Integer duration;
     private Mpa mpa;
     ArrayList<Genre> genres = new ArrayList<>();
+    ArrayList<Director> directors = new ArrayList<>();
 }

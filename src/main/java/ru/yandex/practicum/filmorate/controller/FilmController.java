@@ -1,18 +1,12 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
+
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -61,5 +55,15 @@ public class FilmController {
     @GetMapping("/{id}")
     public Film getFilmById(@PathVariable int id) {
         return filmService.getFilmById(id);
+    }
+
+    @GetMapping("/director/{id}")
+    public List<Film> getFilmsByDirectIdSortedByYear(@PathVariable int id, @RequestParam String sortBy) {
+        if (sortBy.equals("year")) {
+            return filmService.getFilmsByDirectIdSortedByYear(id);
+        } else if (sortBy.equals("likes")) {
+            return filmService.getFilmsByDirectIdSortedByLikes(id);
+        }
+        return null;
     }
 }

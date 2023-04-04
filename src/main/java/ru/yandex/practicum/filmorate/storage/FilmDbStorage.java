@@ -8,6 +8,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import org.yaml.snakeyaml.events.Event;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -71,23 +72,26 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film addFilm(Film film) {
-        String sql=" INSERT INTO films (name, description, releaseDate, duration, MPA) "+
+        String sql = " INSERT INTO films (name, description, releaseDate, duration, MPA) " +
                 "VALUES(?, ?, ?, ?, ?)";
-        KeyHolder keyHolder=new GeneratedKeyHolder();
+        KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(con -> {
-            PreparedStatement stmt=con.prepareStatement(sql,new String[]{"id"});
-            stmt.setString(1,film.getName());
+            PreparedStatement stmt = con.prepareStatement(sql, new String[]{"id"});
+            stmt.setString(1, film.getName());
             stmt.setString(2, film.getDescription());
-            stmt.setDate(3,Date.valueOf(film.getReleaseDate()));
-            stmt.setInt(4,film.getDuration());
-            stmt.setInt(5,film.getMpa().getId());
+            stmt.setDate(3, Date.valueOf(film.getReleaseDate()));
+            stmt.setInt(4, film.getDuration());
+            stmt.setInt(5, film.getMpa().getId());
             return stmt;
         }, keyHolder);
         film.setId(keyHolder.getKey().intValue());
-            if (film.getGenres().size() != 0) {
-                film.getGenres().forEach(genre -> jdbcTemplate.update("INSERT INTO FILM_GENRES (FILM_ID, GENRE_ID) VALUES (?,?)", film.getId(), genre.getId()));
-            }
-            return film;
+        if (film.getGenres().size() != 0) {
+            film.getGenres().forEach(genre -> jdbcTemplate.update("INSERT INTO FILM_GENRES (FILM_ID, GENRE_ID) VALUES (?,?)", film.getId(), genre.getId()));
+        }
+        if (film.getDirectors().size() != 0) {
+            film.getDirectors().forEach(director -> jdbcTemplate.update("INSERT INTO FILM_DIRECT (FILM_ID, DIRECT_ID) VALUES (?,?)", film.getId(), director.getId()));
+        }
+        return film;
     }
 
     @Override
@@ -121,8 +125,8 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getMostPopularFilms(int count) {
-    return jdbcTemplate.query("SELECT FILMS.id FROM FILMS LEFT JOIN LIKES ON FILMS.id = LIKES.film_id GROUP BY FILMS.id ORDER BY COUNT(LIKES.user_id) DESC LIMIT ?", 
-        (rs, rowNum) -> getFilmById(rs.getInt("id")), count);
+        return jdbcTemplate.query("SELECT FILMS.id FROM FILMS LEFT JOIN LIKES ON FILMS.id = LIKES.film_id GROUP BY FILMS.id ORDER BY COUNT(LIKES.user_id) DESC LIMIT ?",
+                (rs, rowNum) -> getFilmById(rs.getInt("id")), count);
     }
 
     @Override

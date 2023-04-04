@@ -8,10 +8,12 @@ import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 
 @Validated
 @Slf4j
@@ -87,5 +89,15 @@ public class FilmService {
         if (film.getReleaseDate().isBefore(FIRST_FILM_RELEASE)) {
             throw new ValidationException("The release of the film cannot be earlier than December 11, 1895.");
         }
+    }
+
+    public List<Film> getFilmsByDirectIdSortedByYear(int directId) {
+        log.debug("Received a request to get all films od director with id: {} sorted by year", directId);
+        return filmStorage.getFilmsByDirectIdSortedByYear(directId);
+    }
+
+    public List<Film> getFilmsByDirectIdSortedByLikes(int directId) {
+        log.debug("Received a request to get all films od director with id: {} sorted by count of likes", directId);
+        return filmStorage.getFilmsByDirectIdSortedByLikes(directId);
     }
 }

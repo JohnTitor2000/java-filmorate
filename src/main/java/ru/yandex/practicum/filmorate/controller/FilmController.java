@@ -10,9 +10,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.yandex.practicum.filmorate.aop.Feed;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
+
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -44,11 +47,13 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
+    @Feed
     public void addLike(@PathVariable int id, @PathVariable int userId) {
         filmService.addLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
+    @Feed
     public void deleteLike(@PathVariable int id, @PathVariable int userId) {
         filmService.deleteLike(id, userId);
     }
@@ -63,6 +68,16 @@ public class FilmController {
         return filmService.getFilmById(id);
     }
 
+    @GetMapping("/director/{id}")
+    public List<Film> getFilmsByDirectIdSortedByYear(@PathVariable int id, @RequestParam String sortBy) {
+        if (sortBy.equals("year")) {
+            return filmService.getFilmsByDirectIdSortedByYear(id);
+        } else if (sortBy.equals("likes")) {
+            return filmService.getFilmsByDirectIdSortedByLikes(id);
+        }
+        return null;
+    }
+        
     @DeleteMapping ("/{id}")
     void deleteFilmById(@PathVariable int id){
         filmService.deleteFilmById(id);

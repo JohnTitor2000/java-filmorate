@@ -2,7 +2,10 @@ package ru.yandex.practicum.filmorate.storage;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
@@ -11,6 +14,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -54,20 +58,37 @@ public class FilmDbStorage implements FilmStorage{
     }
 
     @Override
-    public void addFilm(Film film) {
-        jdbcTemplate.update("INSERT INTO FILMS (name, duration, description, releaseDate, MPA) VALUES (?,?,?,?,?)",
-                film.getName(), film.getDuration(), film.getDescription(), Date.valueOf(film.getReleaseDate()), film.getMpa().getId());
-        SqlRowSet filmIdRow = jdbcTemplate.queryForRowSet("SELECT id FROM FILMS WHERE name = ?", film.getName());
-        filmIdRow.next();
-        if (film.getGenres().size() != 0) {
-            film.getGenres().forEach(genre -> jdbcTemplate.update("INSERT INTO FILM_GENRES (FILM_ID, GENRE_ID) VALUES (?,?)", filmIdRow.getInt("id"), genre.getId()));
-        }
+    public Film addFilm(Film film) {
+        String sql=" INSERT INTO films (name, description, releaseDate, duration, MPA) "+
+                "VALUES(?, ?, ?, ?, ?)";
+        KeyHolder keyHolder=new GeneratedKeyHolder();
+        jdbcTemplate.update(con -> {
+            PreparedStatement stmt=con.prepareStatement(sql,new String[]{"id"});
+            stmt.setString(1,film.getName());
+            stmt.setString(2, film.getDescription());
+            stmt.setDate(3,Date.valueOf(film.getReleaseDate()));
+            stmt.setInt(4,film.getDuration());
+            stmt.setInt(5,film.getMpa().getId());
+            return stmt;
+        }, keyHolder);
+        film.setId(keyHolder.getKey().intValue());
+//        jdbcTemplate.update("INSERT INTO FILMS (name, duration, description, releaseDate, MPA) VALUES (?,?,?,?,?)",
+//                film.getName(), film.getDuration(), film.getDescription(), Date.valueOf(film.getReleaseDate()), film.getMpa().getId());
+//        SqlRowSet filmIdRow = jdbcTemplate.queryForRowSet("SELECT id FROM FILMS WHERE name = ?", film.getName());
+//        filmIdRow.next();
+            if (film.getGenres().size() != 0) {
+                film.getGenres().forEach(genre -> jdbcTemplate.update("INSERT INTO FILM_GENRES (FILM_ID, GENRE_ID) VALUES (?,?)", film.getId(), genre.getId()));
+            }
+            return film;
     }
 
     @Override
     public void deleteFilmById(int id) {
-        jdbcTemplate.update("DELETE FROM FILMS WHERE id=?", id);
-        jdbcTemplate.update("DELETE FROM FILM_GENRES WHERE FILM_ID=?", id);
+        try {
+            jdbcTemplate.update("DELETE FROM FILMS WHERE id=?", id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new NotFoundException(String.format("The movie with this id %d was not found", id));
+        }
     }
 
     @Override
@@ -88,7 +109,9 @@ public class FilmDbStorage implements FilmStorage{
 
     @Override
     public List<Film> getMostPopularFilms(int count) {
-        return jdbcTemplate.query("SELECT FILMS.id FROM FILMS LEFT JOIN LIKES ON FILMS.id = LIKES.film_id GROUP BY FILMS.id ORDER BY COUNT(LIKES.user_id) DESC LIMIT ?", (rs, rowNum) -> getFilmById(rs.getInt("id")),count);
+        return jdbcTemplate.query("SELECT FILMS.id FROM FILMS LEFT JOIN LIKES ON FILMS.id = LIKES.film_id " +
+                "GROUP BY FILMS.id ORDER BY COUNT(LIKES.user_id) DESC LIMIT ?",
+                (rs, rowNum) -> getFilmById(rs.getInt("id")),count);
     }
 
     @Override

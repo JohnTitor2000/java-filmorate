@@ -37,16 +37,20 @@ public class FilmService {
         return filmStorage.getFilmById(id);
     }
 
-    public void addFilm(@Valid Film film) {
+    public Film addFilm(@Valid Film film) {
         filmDataValidate(film);
         film.setId(currentId++);
         log.debug("Received a request to create a movie.");
         filmStorage.addFilm(film);
+        return film;
     }
 
 
     public void deleteFilmById(Film film) {
         filmStorage.deleteFilmById(film.getId());
+    }
+    public void deleteFilmById(int id) {
+        filmStorage.deleteFilmById(id);
     }
 
     public void updateFilm(@Valid Film film) {

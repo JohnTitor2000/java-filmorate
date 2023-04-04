@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -44,7 +45,11 @@ public class UserDbStorage implements UserStorage{
 
     @Override
     public void deleteUserById(int id) {
-        jdbcTemplate.update("DELETE FROM USERS WHERE id=?", id);
+        try {
+            jdbcTemplate.update("DELETE FROM USERS WHERE id=?", id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new NotFoundException(String.format("User with this id %d was not found", id));
+        }
     }
 
     @Override
@@ -79,6 +84,10 @@ public class UserDbStorage implements UserStorage{
 
     @Override
     public List<User> getFriends(int id) {
+        User user = getUserById(id);
+        if(user == null) {
+            throw new NotFoundException(String.format("User with this id %d was not found", id));
+        }
             return jdbcTemplate.query("SELECT requester_id, receiver_id, сonfirmation FROM FRIENDSHIP WHERE requester_id = ? OR (receiver_id = ? AND сonfirmation = true)",
                     (rs, rowNum) -> makeUser(id, rs), id, id);
     }

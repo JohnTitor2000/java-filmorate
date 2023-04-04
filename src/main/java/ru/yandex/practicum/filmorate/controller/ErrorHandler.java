@@ -5,10 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import ru.yandex.practicum.filmorate.exceptions.GetNotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.UpdateNotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.exceptions.*;
 
 import java.util.Map;
 
@@ -20,7 +17,7 @@ public class ErrorHandler {
     public ResponseEntity<Map<String, String>> handleNotFoundException(final Exception e) {
         log.error("ID not found.", e);
         return new ResponseEntity<>(Map.of("message", e.getMessage()),
-                                    HttpStatus.NOT_FOUND);
+                HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler
@@ -35,5 +32,12 @@ public class ErrorHandler {
         log.error("Validation error.", e);
         return new ResponseEntity<>(Map.of("message", e.getMessage()),
                 HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<Map<String, String>> handleNotPositiveFieldException(final NotPositiveFieldException e) {
+        log.error("Validation error.", e);
+        return new ResponseEntity<>(Map.of("message", e.getMessage()),
+                HttpStatus.NOT_FOUND);
     }
 }

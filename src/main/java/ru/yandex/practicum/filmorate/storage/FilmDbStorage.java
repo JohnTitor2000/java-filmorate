@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -28,6 +29,42 @@ public class FilmDbStorage implements FilmStorage {
     private final GenreDbStorage genreDbStorage;
     private final MpaDbStorage mpaDbStorage;
     private final DirectorDbStorage directorDbStorage;
+
+    public List<Film> getFilmSearch(String query, String by) {
+        String sqlQuery;
+        if (by.equals("title")) {
+            sqlQuery = "SELECT DISTINCT FILMS.ID, FILMS.NAME, FILMS.DESCRIPTION, FILMS.RELEASEDATE, FILMS.DURATION, " +
+                    "FILMS.MPA, COUNT(LIKES.USER_ID) FROM FILMS LEFT JOIN LIKES ON FILMS.ID = LIKES.FILM_ID " +
+                    "WHERE FILMS.NAME ILIKE ('%" + query + "%') " +
+                    "GROUP BY FILMS.ID ORDER BY COUNT(LIKES.USER_ID) DESC";
+        } else if (by.equals("director")) {
+            sqlQuery = "SELECT DISTINCT FILMS.ID, FILMS.NAME, FILMS.DESCRIPTION, FILMS.RELEASEDATE, FILMS.DURATION, " +
+                    "FILMS.MPA, COUNT(LIKES.USER_ID) FROM FILMS LEFT JOIN LIKES ON FILMS.ID = LIKES.FILM_ID " +
+                    "LEFT JOIN FILM_DIRECT ON FILM_DIRECT.FILM_ID = FILMS.ID " +
+                    "LEFT JOIN DIRECTS ON DIRECTS.DIRECT_ID = FILM_DIRECT.DIRECT_ID " +
+                    "WHERE DIRECTS.NAME ILIKE ('%" + query + "%') " +
+                    "GROUP BY FILMS.ID , FILM_DIRECT.DIRECT_ID ORDER BY COUNT(LIKES.USER_ID) DESC";
+        } else if (by.equals("title,director") || by.equals("director,title")) {
+            sqlQuery = "SELECT DISTINCT FILMS.ID, FILMS.NAME, FILMS.DESCRIPTION, FILMS.RELEASEDATE, FILMS.DURATION, " +
+                    "FILMS.MPA, COUNT(LIKES.USER_ID) FROM FILMS LEFT JOIN LIKES ON FILMS.ID = LIKES.FILM_ID " +
+                    "LEFT JOIN FILM_DIRECT ON FILM_DIRECT.FILM_ID = FILMS.ID " +
+                    "LEFT JOIN DIRECTS ON DIRECTS.DIRECT_ID = FILM_DIRECT.DIRECT_ID " +
+                    "WHERE FILMS.NAME ILIKE ('%" + query + "%') OR " +
+                    "DIRECTS.NAME ILIKE ('%" + query + "%') " +
+                    "GROUP BY FILMS.ID, FILM_DIRECT.DIRECT_ID ORDER BY COUNT(LIKES.USER_ID) DESC";
+        } else if (by.isEmpty()) {
+            sqlQuery = "SELECT DISTINCT FILMS.ID, FILMS.NAME, FILMS.DESCRIPTION, FILMS.RELEASEDATE, FILMS.DURATION,  " +
+                    "FILMS.MPA, COUNT(LIKES.USER_ID) FROM FILMS LEFT JOIN LIKES ON FILMS.ID = LIKES.FILM_ID " +
+                    "GROUP BY FILMS.ID ORDER BY COUNT(LIKES.USER_ID) DESC";
+        } else {
+            throw new NotFoundException("Incorrect request parameter - " + by);
+        }
+        List<Film> films = new ArrayList<>();
+        try {
+            films.addAll(jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeFilm(rs)));
+        } catch (Exception ignored) {}
+        return films;
+    }
 
     @Override
     public Film getFilmById(int id) {

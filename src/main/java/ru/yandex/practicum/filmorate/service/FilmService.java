@@ -59,6 +59,10 @@ public class FilmService {
         filmStorage.updateFilmById(film.getId(), film);
     }
 
+    public List<Film> getFilmSearch(String query, String by) {
+        return filmStorage.getFilmSearch(query, by);
+    }
+
     public Collection<Film> getAllFilms() {
         log.debug("Received a request to receive all movies.");
         return filmStorage.getAllFilms();

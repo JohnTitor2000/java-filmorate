@@ -28,15 +28,15 @@ CREATE TABLE IF NOT EXISTS FILMS(
 );
 
 CREATE TABLE IF NOT EXISTS FRIENDSHIP(
-    requester_id int NOT NULL,
-    receiver_id int NOT NULL,
+    requester_id int NOT NULL REFERENCES USERS (id) ON DELETE CASCADE,
+    receiver_id int NOT NULL REFERENCES USERS (id) ON DELETE CASCADE,
     сonfirmation boolean NOT NULL,
     PRIMARY KEY (requester_id, receiver_id)
 );
 
 CREATE TABLE IF NOT EXISTS FILM_GENRES(
-    film_id int REFERENCES FILMS (id),
-    genre_id int REFERENCES GENRES (genre_id),
+    film_id int ,
+    genre_id int,
     PRIMARY KEY (film_id, genre_id)
 );
 
@@ -53,8 +53,8 @@ CREATE TABLE IF NOT EXISTS FILM_DIRECT(
     );
 
 CREATE TABLE IF NOT EXISTS LIKES(
-    user_id int REFERENCES USERS (id),
-    film_id int REFERENCES FILMS (id)
+    user_id int REFERENCES USERS (id) ON DELETE CASCADE,
+    film_id int REFERENCES FILMS (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS "REVIEWS"(

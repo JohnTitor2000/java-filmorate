@@ -9,7 +9,7 @@ public interface FilmStorage {
 
     Film getFilmById(int id);
 
-    void addFilm(Film film);
+    Film addFilm(Film film);
 
     void deleteFilmById(int id);
 

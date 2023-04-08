@@ -30,6 +30,4 @@ public interface FilmStorage {
     List<Film> getFilmsByDirectIdSortedByYear(int directId);
 
     List<Film> getFilmsByDirectIdSortedByLikes(int directId);
-
-    List<Film> getFilmSearch(String query, String by);
 }

@@ -32,11 +32,6 @@ public class FilmController {
         return film;
     }
 
-    @GetMapping("/search")
-    public List<Film> getFilmSearch(@RequestParam(defaultValue = "") String query, @RequestParam(defaultValue = "") String by) {
-        return filmService.getFilmSearch(query, by);
-    }
-
     @PutMapping
     public Film filmUpdate(@RequestBody Film film) {
         filmService.updateFilm(film);

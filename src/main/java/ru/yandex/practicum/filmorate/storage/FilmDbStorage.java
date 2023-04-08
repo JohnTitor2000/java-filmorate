@@ -218,7 +218,9 @@ public class FilmDbStorage implements FilmStorage {
         List<Film> films = new ArrayList<>();
         try {
             films.addAll(jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeFilm(rs)));
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+
+        }
         return films;
     }
 }

@@ -90,7 +90,7 @@ public class UserService {
     }
 
     private void nameValidation(User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
+        if (user.getName() == null || user.getName().isBlank() || user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
     }

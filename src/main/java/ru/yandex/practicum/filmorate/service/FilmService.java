@@ -105,4 +105,8 @@ public class FilmService {
         log.debug("Received a request to get all films od director with id: {} sorted by count of likes", directId);
         return filmStorage.getFilmsByDirectIdSortedByLikes(directId);
     }
+
+    public List<Film> getFilmSearch(String query, String by) {
+        return filmStorage.getFilmSearch(query, by);
+    }
 }

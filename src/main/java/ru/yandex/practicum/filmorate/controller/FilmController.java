@@ -77,4 +77,9 @@ public class FilmController {
         }
         return null;
     }
+
+    @GetMapping("/search")
+    public List<Film> getFilmSearch(@RequestParam(defaultValue = "") String query, @RequestParam(defaultValue = "") String by) {
+        return filmService.getFilmSearch(query, by);
+    }
 }

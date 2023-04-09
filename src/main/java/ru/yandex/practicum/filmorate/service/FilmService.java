@@ -8,10 +8,12 @@ import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 
 @Validated
 @Slf4j
@@ -37,15 +39,21 @@ public class FilmService {
         return filmStorage.getFilmById(id);
     }
 
-    public void addFilm(@Valid Film film) {
+    public Film addFilm(@Valid Film film) {
         filmDataValidate(film);
         film.setId(currentId++);
         log.debug("Received a request to create a movie.");
         filmStorage.addFilm(film);
+        return film;
     }
+
 
     public void deleteFilmById(Film film) {
         filmStorage.deleteFilmById(film.getId());
+    }
+
+    public void deleteFilmById(int id) {
+        filmStorage.deleteFilmById(id);
     }
 
     public void updateFilm(@Valid Film film) {
@@ -55,6 +63,10 @@ public class FilmService {
         }
         log.debug("Received a request to update the movie with ID: " + film.getId());
         filmStorage.updateFilmById(film.getId(), film);
+    }
+
+    public List<Film> getFilmSearch(String query, String by) {
+        return filmStorage.getFilmSearch(query, by);
     }
 
     public Collection<Film> getAllFilms() {
@@ -82,5 +94,15 @@ public class FilmService {
         if (film.getReleaseDate().isBefore(FIRST_FILM_RELEASE)) {
             throw new ValidationException("The release of the film cannot be earlier than December 11, 1895.");
         }
+    }
+
+    public List<Film> getFilmsByDirectIdSortedByYear(int directId) {
+        log.debug("Received a request to get all films od director with id: {} sorted by year", directId);
+        return filmStorage.getFilmsByDirectIdSortedByYear(directId);
+    }
+
+    public List<Film> getFilmsByDirectIdSortedByLikes(int directId) {
+        log.debug("Received a request to get all films od director with id: {} sorted by count of likes", directId);
+        return filmStorage.getFilmsByDirectIdSortedByLikes(directId);
     }
 }

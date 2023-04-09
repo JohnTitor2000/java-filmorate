@@ -9,7 +9,7 @@ public interface FilmStorage {
 
     Film getFilmById(int id);
 
-    void addFilm(Film film);
+    Film addFilm(Film film);
 
     void deleteFilmById(int id);
 
@@ -24,4 +24,10 @@ public interface FilmStorage {
     void addLike(int id, int userId);
 
     void deleteLike(int id, int userId);
+
+    List<Film> getFilmSearch(String query, String by);
+
+    List<Film> getFilmsByDirectIdSortedByYear(int directId);
+
+    List<Film> getFilmsByDirectIdSortedByLikes(int directId);
 }

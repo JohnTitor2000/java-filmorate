@@ -1,8 +1,10 @@
 package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -10,18 +12,18 @@ import javax.validation.constraints.Size;
 
 @Data
 @Builder
+@FieldDefaults(level= AccessLevel.PRIVATE)
 public class Review {
-    private Integer reviewId;
-    @NotNull
+    Integer reviewId;
     @NotBlank
     @Size(max = 500)
-    private String content;
+    String content;
     @NotNull
     @JsonProperty(value = "isPositive")
-    private Boolean isPositive;
+    Boolean isPositive;
     @NotNull
-    private Integer userId;
+    Integer userId;
     @NotNull
-    private Integer filmId;
-    private int useful;
+    Integer filmId;
+    int useful;
 }

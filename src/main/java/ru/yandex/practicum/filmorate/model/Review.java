@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 
 @Data
 @Builder
-@FieldDefaults(level= AccessLevel.PRIVATE)
+@FieldDefaults(level=AccessLevel.PRIVATE)
 public class Review {
     Integer reviewId;
     @NotBlank
